@@ -107,7 +107,7 @@ ON CONFLICT (type_code) DO NOTHING;
 
 ---
 -- tab_section definition
----i
+---
 
 CREATE TYPE section_type AS ENUM (
   'standard',      -- standard section from above to bottom by removing the part of stratigraphy
@@ -131,7 +131,7 @@ CREATE TYPE geopt_code AS ENUM (
       'FX', -- fix (e.g. nail)
       'EP', -- excavation polygon
       'FO', -- photogrammetric point
-      'NI', -- nielation for making surfaces
+      'NI', -- nivelation for making surfaces
       'PF', -- point field for total station stationing
       'SP'  -- special meaning (free)
 );
@@ -363,7 +363,7 @@ ALTER TABLE tab_photos ADD CONSTRAINT tab_photos_author_fkey FOREIGN KEY (author
 -- tab_sketches definition
 ---
 CREATE TABLE tab_sketches (
-  id_sketch        VARCHAR(120) PRIMARY KEY,                      
+  id_sketch        text PRIMARY KEY,                      
   sketch_typ       VARCHAR(80)  NOT NULL,
   author           VARCHAR(100) NOT NULL REFERENCES gloss_personalia(mail),
   datum            date,
@@ -668,7 +668,7 @@ CREATE INDEX IF NOT EXISTS tab_section_geopts_binding_idx ON tab_section_geopts_
 CREATE TABLE IF NOT EXISTS tabaid_section_photos (
   id_aut   serial PRIMARY KEY,
   ref_section int4 NOT NULL REFERENCES tab_section(id_section) ON UPDATE CASCADE ON DELETE CASCADE,
-  ref_photo varchar(120) NOT NULL REFERENCES tab_photos(id_photo) ON UPDATE CASCADE ON DELETE CASCADE,
+  ref_photo varchar(150) NOT NULL REFERENCES tab_photos(id_photo) ON UPDATE CASCADE ON DELETE CASCADE,
   UNIQUE (ref_section, ref_photo)
 );
 CREATE INDEX IF NOT EXISTS tabaid_section_photos_idx ON tabaid_section_photos(ref_section, ref_photo);
@@ -698,7 +698,7 @@ CREATE INDEX IF NOT EXISTS tabaid_section_photograms_idx ON tabaid_section_photo
 CREATE TABLE IF NOT EXISTS tabaid_section_drawings (
   id_aut    serial PRIMARY KEY,
   ref_section   int NOT NULL REFERENCES tab_section(id_section) ON UPDATE CASCADE ON DELETE CASCADE,
-  ref_drawing varchar(120) NOT NULL REFERENCES tab_drawings(id_drawing) ON UPDATE CASCADE ON DELETE CASCADE,
+  ref_drawing varchar(150) NOT NULL REFERENCES tab_drawings(id_drawing) ON UPDATE CASCADE ON DELETE CASCADE,
   UNIQUE (ref_section, ref_drawing)
 );
 CREATE INDEX IF NOT EXISTS tabaid_section_drawings_idx ON tabaid_section_drawings(ref_section, ref_drawing);
