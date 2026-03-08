@@ -10,6 +10,19 @@ CREATE ROLE grp_dbas WITH CREATEDB INHERIT;
 GRANT pg_write_all_data TO grp_dbas;
 CREATE ROLE grp_analysts WITH INHERIT;
 GRANT pg_read_all_data TO grp_analysts;
+
+-- GIS roles with no login
+CREATE ROLE gis_rw WITH NOLOGIN INHERIT;
+GRANT pg_read_all_data, pg_write_all_data TO gis_rw;
+
+CREATE ROLE gis_ro WITH NOLOGIN INHERIT;
+GRANT pg_read_all_data TO gis_ro;
+
+-- Explicitly restrict connections to "postgres" and basic templates for these roles
+-- (Revoking from PUBLIC is required because all users inherit PUBLIC permissions)
+REVOKE CONNECT ON DATABASE postgres FROM PUBLIC, gis_rw, gis_ro;
+REVOKE CONNECT ON DATABASE template1 FROM PUBLIC, gis_rw, gis_ro;
+
 CREATE ROLE app_terrain_db WITH LOGIN;
 ALTER ROLE app_terrain_db WITH createdb;
 GRANT grp_dbas TO app_terrain_db;
@@ -17,6 +30,9 @@ GRANT grp_dbas TO app_terrain_db;
 -- This database is intended to be a template while assuming
 -- cluster would server for more terrain DBs. After template creation You are able to create new database with 'CREATE DATABASE XYZ WITH TEMPLATE = 'terrain_db_template;''
 CREATE DATABASE terrain_db_template OWNER app_terrain_db ENCODING 'UTF8' IS_TEMPLATE true;
+
+-- Restrict connections to the new terrain template database
+REVOKE CONNECT ON DATABASE terrain_db_template FROM PUBLIC, gis_rw, gis_ro;
 
 -- Connect to the template database to configure it
 \c terrain_db_template;
